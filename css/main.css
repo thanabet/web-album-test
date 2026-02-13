@@ -1,22 +1,38 @@
 :root{
-  --bg: #151515;
-  --paper: #f3ead7;
-  --paper2: #efe3c8;
-  --ink: rgba(10,10,10,.82);
+  --ink: rgba(12,12,12,.78);
 
-  /* pose tuning */
-  --closed-scale: 1;
-  --open-scale: 1.02;       /* เปิดแล้วไม่ต้องขยายเยอะ เพราะ spread ใหญ่แล้ว */
+  /* stage */
+  --stage-w: 1040px;
+  --stage-h: 620px;
+
+  /* closed book */
+  --book-w: 280px;       /* portrait */
+  --book-ar: 3/4;        /* width/height */
   --closed-rot: -2deg;
+
+  /* open album frame (outer cover border) */
+  --frame-ar: 16/9;      /* landscape frame */
+  --frame-pad: 26px;     /* border thickness */
+  --frame-radius: 22px;
+
+  /* page inside open */
+  --page-gap: 18px;
+  --page-radius: 16px;
+
+  /* photo slot */
+  --photo-ar: 2/3;       /* 4x6 */
+  --plastic-scale: 1.08; /* plastic bigger than photo */
+  --back-offset: 10px;   /* photo-back peek */
+
+  /* transforms */
+  --open-scale: 1.0;
   --open-rot: -1deg;
 
-  /* stage sizes (landscape-first) */
-  --stage-max-w: 1040px;
-  --stage-max-h: 560px;
-
-  /* closed book size (portrait-ish but not too tall) */
-  --book-w: 260px;   /* จะถูก clamp อีกชั้น */
-  --book-ar: 3/4;    /* width/height */
+  /* colors (placeholders) */
+  --cover-front1: #6c2b2b;
+  --cover-front2: #3e1414;
+  --cover-back1: #1e3b55;
+  --cover-back2: #0d2233;
 }
 
 *{box-sizing:border-box}
@@ -24,15 +40,15 @@ html,body{height:100%}
 body{
   margin:0;
   font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "SF Pro Text", Arial, sans-serif;
-  background: var(--bg);
-  color:#fff;
   overflow:hidden;
   -webkit-tap-highlight-color: transparent;
+  background:#111;
+  color:#fff;
 }
 
 .app{height:100%; width:100%}
 
-/* TABLE (placeholder warm wood) */
+/* TABLE */
 .table{
   position:relative;
   height:100%;
@@ -53,90 +69,79 @@ body{
   pointer-events:none;
 }
 
-/* STAGE (we keep it landscape-ish even in portrait by clamping) */
+/* STAGE */
 .stage{
   position:relative;
-  width: min(96vw, var(--stage-max-w));
-  height: min(86vh, var(--stage-max-h));
+  width: min(96vw, var(--stage-w));
+  height: min(90vh, var(--stage-h));
   display:flex;
   align-items:center;
   justify-content:center;
 }
 
-/* ALBUM WRAPPER (poses affect transform only) */
-.album-wrap{
+/* ALBUM ROOT (pose) */
+.album{
   position:relative;
   width: 100%;
   height: 100%;
   transform-origin: 50% 50%;
-  transition: transform 200ms cubic-bezier(.2,.9,.2,1);
   filter: drop-shadow(0 18px 30px rgba(0,0,0,.42));
+  transition: transform 200ms cubic-bezier(.2,.9,.2,1);
 }
 
-.album-wrap.pose-closed{
-  transform: translate(0px, 0px) scale(var(--closed-scale)) rotate(var(--closed-rot));
+.album.pose-closed{
+  transform: translate(0,0) rotate(var(--closed-rot));
 }
-.album-wrap.pose-open{
-  transform: translate(0px, 0px) scale(var(--open-scale)) rotate(var(--open-rot));
+.album.pose-open{
+  transform: translate(0,0) scale(var(--open-scale)) rotate(var(--open-rot));
 }
-.album-wrap.pose-back{
-  transform: translate(0px, 0px) scale(var(--closed-scale)) rotate(var(--closed-rot));
+.album.pose-back{
+  transform: translate(0,0) rotate(var(--closed-rot));
 }
 
-/* CLOSED COVER BUTTON overlays the whole wrapper, but the book itself is centered */
+/* CLOSED BOOK */
 .cover-btn{
-  position:absolute;
-  inset:0;
-  border:0;
-  padding:0;
+  position:absolute; inset:0;
+  border:0; padding:0;
   background:transparent;
   cursor:pointer;
 }
-
-/* BOOK (closed) */
 .book{
   position:absolute;
-  left:50%;
-  top:50%;
+  left:50%; top:50%;
   transform: translate(-50%, -50%);
-  width: clamp(210px, 28vw, var(--book-w));
+  width: clamp(220px, 30vw, var(--book-w));
   aspect-ratio: var(--book-ar);
   border-radius: 18px;
   overflow:hidden;
 }
-.book-shadow{
+.book-drop{
   position:absolute;
-  inset:-20px;
-  background: radial-gradient(240px 180px at 50% 70%, rgba(0,0,0,.38), rgba(0,0,0,0) 70%);
+  inset:-22px;
+  background: radial-gradient(260px 200px at 50% 75%, rgba(0,0,0,.42), rgba(0,0,0,0) 70%);
   transform: translateY(26px);
   pointer-events:none;
-  opacity:.9;
+  opacity:.95;
 }
-
 .book-face{
   position:absolute; inset:0;
   border-radius: 18px;
-  box-shadow:
-    0 10px 18px rgba(0,0,0,.22),
-    inset 0 1px 0 rgba(255,255,255,.12);
-  overflow:hidden;
+  box-shadow: 0 10px 18px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.12);
 }
 
-/* FRONT COVER placeholder (warm leather) */
+/* cover style placeholders */
 .book.book-front .book-face{
   background:
     radial-gradient(120px 120px at 25% 20%, rgba(255,255,255,.12), rgba(0,0,0,0) 65%),
     radial-gradient(220px 220px at 70% 80%, rgba(255,255,255,.08), rgba(0,0,0,0) 70%),
     repeating-linear-gradient(25deg, rgba(255,255,255,.06) 0px, rgba(255,255,255,.06) 6px, rgba(0,0,0,0) 6px, rgba(0,0,0,0) 12px),
-    linear-gradient(180deg, #6c2b2b, #3e1414);
+    linear-gradient(180deg, var(--cover-front1), var(--cover-front2));
 }
-
-/* BACK COVER placeholder (cool tone) */
 .book.book-back .book-face{
   background:
     radial-gradient(120px 120px at 25% 20%, rgba(255,255,255,.10), rgba(0,0,0,0) 65%),
     repeating-linear-gradient(25deg, rgba(255,255,255,.05) 0px, rgba(255,255,255,.05) 6px, rgba(0,0,0,0) 6px, rgba(0,0,0,0) 12px),
-    linear-gradient(180deg, #1e3b55, #0d2233);
+    linear-gradient(180deg, var(--cover-back1), var(--cover-back2));
 }
 
 .book-spine{
@@ -150,8 +155,7 @@ body{
 }
 
 .cover-title{
-  position:absolute;
-  inset:0;
+  position:absolute; inset:0;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -162,118 +166,186 @@ body{
   text-shadow: 0 2px 10px rgba(0,0,0,.35);
   padding: 0 14px;
 }
-.cover-title .brand{
-  letter-spacing:.12em;
-  font-size:12px;
-  opacity:.9;
-}
-.cover-title .name{
-  font-weight:700;
-  font-size:22px;
-}
-.cover-title .hint{
-  margin-top:10px;
-  font-size:12px;
-  opacity:.75;
-}
+.cover-title .brand{ letter-spacing:.12em; font-size:12px; opacity:.9; }
+.cover-title .name{ font-weight:700; font-size:22px; }
+.cover-title .hint{ margin-top:10px; font-size:12px; opacity:.75; }
 
-/* OPEN SPREAD */
-.spread{
-  position:absolute;
-  inset: 0;
+/* OPEN WRAP */
+.open-wrap{
+  position:absolute; inset:0;
   display:none;
   align-items:center;
   justify-content:center;
-  gap: 22px;
-  perspective: 1200px;
 }
-.album-wrap.is-open .spread{display:flex;}
-.album-wrap.is-open .cover-btn{display:none;}
+.album.is-open .open-wrap{ display:flex; }
+.album.is-open .cover-btn{ display:none; }
 
-/* Each page = 4x6 aspect (2:3) */
+.open-frame{
+  width: min(96vw, 980px);
+  aspect-ratio: var(--frame-ar);
+  border-radius: var(--frame-radius);
+  padding: var(--frame-pad);
+  position:relative;
+  /* outer cover border visible */
+  background:
+    radial-gradient(220px 180px at 20% 20%, rgba(255,255,255,.08), rgba(0,0,0,0) 60%),
+    radial-gradient(340px 240px at 75% 80%, rgba(0,0,0,.18), rgba(0,0,0,0) 65%),
+    repeating-linear-gradient(25deg, rgba(255,255,255,.05) 0px, rgba(255,255,255,.05) 8px, rgba(0,0,0,0) 8px, rgba(0,0,0,0) 16px),
+    linear-gradient(180deg, #7a3a3a, #3f1717);
+  box-shadow: 0 18px 26px rgba(0,0,0,.32);
+}
+
+.inner{
+  position:relative;
+  width:100%; height:100%;
+  border-radius: calc(var(--frame-radius) - 10px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap: var(--page-gap);
+  overflow:hidden;
+
+  /* inner board / paper base */
+  background:
+    radial-gradient(360px 240px at 30% 25%, rgba(255,255,255,.18), rgba(0,0,0,0) 60%),
+    linear-gradient(180deg, #efe3c8, #e6d7b7);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+}
+
+/* PAGES */
 .page{
   position:relative;
-  height: min(92%, 520px);
-  aspect-ratio: 2 / 3;
-  border-radius: 16px;
+  height: 92%;
+  width: 44%;
+  border-radius: var(--page-radius);
   overflow:hidden;
-}
-
-/* Paper */
-.paper{
-  position:absolute;
-  inset:0;
-  border-radius: 16px;
-  background:
-    radial-gradient(200px 160px at 30% 20%, rgba(255,255,255,.35), rgba(0,0,0,0) 60%),
-    linear-gradient(180deg, var(--paper), var(--paper2));
-  box-shadow:
-    0 12px 18px rgba(0,0,0,.16),
-    inset 0 1px 0 rgba(255,255,255,.38);
-}
-
-.paper-inner{
-  position:absolute;
-  inset:14px;
-  border-radius: 12px;
-  background:
-    repeating-linear-gradient(0deg, rgba(0,0,0,.02) 0px, rgba(0,0,0,.02) 2px, rgba(255,255,255,0) 2px, rgba(255,255,255,0) 7px),
-    radial-gradient(260px 220px at 40% 30%, rgba(0,0,0,.03), rgba(0,0,0,0) 60%);
-  overflow:hidden;
-}
-
-.label{
-  position:absolute;
-  left:12px;
-  bottom:12px;
-  font-size:12px;
-  color: var(--ink);
-  opacity:.65;
-  user-select:none;
-}
-
-/* plastic sleeve */
-.sleeve{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(120deg,
-      rgba(255,255,255,.0) 0%,
-      rgba(255,255,255,.10) 18%,
-      rgba(255,255,255,.02) 38%,
-      rgba(255,255,255,.08) 62%,
-      rgba(255,255,255,.0) 85%),
-    radial-gradient(180px 120px at 70% 25%, rgba(255,255,255,.12), rgba(255,255,255,0) 70%);
-  mix-blend-mode: screen;
-  opacity: .55;
 }
 
 /* tap zones */
 .tap-zone{
   position:absolute;
   top:0; bottom:0;
-  width: 44%;
+  width: 42%;
   cursor:pointer;
 }
-.tap-left{left:0;}
-.tap-right{right:0;}
-.tap-zone:active{ background: rgba(0,0,0,.04); }
+.tap-left{ left:0; }
+.tap-right{ right:0; }
+.tap-zone:active{ background: rgba(0,0,0,.03); }
 
-/* gutter */
-.gutter{
+/* SPINE overlay image (user provided) */
+.spine{
   position:absolute;
   left:50%;
-  top: 6%;
-  bottom: 6%;
-  width:22px;
-  transform: translateX(-50%);
-  background: radial-gradient(12px 320px at 50% 50%, rgba(0,0,0,.25), rgba(0,0,0,0) 70%);
-  opacity:.75;
+  top:50%;
+  transform: translate(-50%, -50%);
+  width: 72px;   /* tweak to match your real spine */
+  height: 94%;
   pointer-events:none;
+  z-index: 30;
+  filter: drop-shadow(0 10px 14px rgba(0,0,0,.22));
+}
+.spine-img{
+  width:100%;
+  height:100%;
+  object-fit: contain;
+  display:block;
 }
 
-/* tiny hud */
+/* PAGE CONTENT templates */
+.page-content{
+  position:absolute;
+  inset: 0;
+  padding: 18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* INSIDE COVER (image background) */
+.inside-cover{
+  position:relative;
+  width:100%;
+  height:100%;
+  border-radius: 14px;
+  overflow:hidden;
+  background: #ddd;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+}
+.inside-cover img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  display:block;
+}
+
+/* PHOTO SLOT */
+.photo-slot{
+  position:relative;
+  width: 72%;
+  aspect-ratio: var(--photo-ar);
+  border-radius: 10px;
+}
+
+/* back photo peek (like another photo inside sleeve) */
+.photo-back{
+  position:absolute;
+  inset: 0;
+  transform: translate(var(--back-offset), calc(var(--back-offset) * -1));
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.9), rgba(245,245,245,.82));
+  box-shadow: 0 8px 14px rgba(0,0,0,.18);
+  z-index: 1;
+}
+
+/* main photo */
+.photo-main{
+  position:absolute;
+  inset: 0;
+  border-radius: 10px;
+  overflow:hidden;
+  background:
+    radial-gradient(220px 180px at 25% 25%, rgba(255,255,255,.30), rgba(0,0,0,0) 60%),
+    linear-gradient(180deg, rgba(220,220,220,.9), rgba(195,195,195,.85));
+  box-shadow: 0 10px 16px rgba(0,0,0,.22);
+  z-index: 2;
+}
+.photo-main img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  display:block;
+}
+
+/* plastic overlay PNG (bigger than photo) */
+.plastic{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width: calc(100% * var(--plastic-scale));
+  height: calc(100% * var(--plastic-scale));
+  transform: translate(-50%, -50%);
+  pointer-events:none;
+  z-index: 5;
+  opacity: .95;
+  object-fit: contain;
+  display:block;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
+}
+
+/* small label (debug-like) */
+.slot-label{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  font-size:12px;
+  color: var(--ink);
+  opacity:.55;
+  z-index: 6;
+  user-select:none;
+}
+
+/* HUD (optional) */
 .hud{
   position:absolute;
   bottom:12px;
@@ -288,12 +360,11 @@ body{
   display:none;
 }
 
-/* Portrait fallback: keep spread readable by lowering heights a bit */
+/* Portrait fallback: keep open frame readable (shrink a bit) */
 @media (orientation: portrait){
-  .stage{
-    height: min(92vh, 720px);
+  .open-frame{
+    width: min(96vw, 760px);
   }
-  .page{
-    height: min(78%, 520px);
-  }
+  .spine{ width: 64px; }
+  .photo-slot{ width: 78%; }
 }

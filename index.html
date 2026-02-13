@@ -3,21 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Intromie Photo Album (M1)</title>
+  <title>Intromie Photo Album (M1 - Real Album)</title>
   <link rel="stylesheet" href="./css/main.css" />
 </head>
 <body>
-  <main id="app" class="app">
-    <div id="table" class="table">
+  <main class="app">
+    <div class="table">
       <div class="vignette"></div>
 
-      <div id="stage" class="stage" aria-label="Album stage">
-        <!-- Album wrapper (pose moves/scale) -->
-        <div id="albumWrap" class="album-wrap pose-closed" role="group" aria-label="Album">
+      <div id="stage" class="stage">
+        <div id="album" class="album pose-closed">
 
-          <!-- CLOSED (front/back cover) -->
+          <!-- CLOSED BOOK -->
           <button id="coverBtn" class="cover-btn" type="button" aria-label="Tap to open album">
-            <div id="coverBook" class="book book-front">
+            <div id="book" class="book book-front">
               <div class="book-face">
                 <div class="cover-title">
                   <div class="brand">Intromie</div>
@@ -26,38 +25,38 @@
                 </div>
               </div>
               <div class="book-spine"></div>
-              <div class="book-shadow"></div>
+              <div class="book-drop"></div>
             </div>
           </button>
 
-          <!-- OPEN spread (landscape) -->
-          <div id="spread" class="spread" aria-hidden="true">
-            <div class="page left">
-              <div class="paper">
-                <div class="paper-inner">
-                  <div id="leftLabel" class="label"></div>
-                  <div class="sleeve"></div>
-                </div>
-              </div>
-              <div id="tapLeft" class="tap-zone tap-left" aria-label="Tap left to go back"></div>
-            </div>
+          <!-- OPEN ALBUM (spread) -->
+          <div id="openWrap" class="open-wrap" aria-hidden="true">
+            <div class="open-frame">
+              <!-- this frame is the "outer cover border" you see around inner pages -->
+              <div class="inner">
 
-            <div class="page right">
-              <div class="paper">
-                <div class="paper-inner">
-                  <div id="rightLabel" class="label"></div>
-                  <div class="sleeve"></div>
+                <div class="page left">
+                  <!-- inside cover OR photo slot -->
+                  <div id="leftContent" class="page-content"></div>
+                  <div id="tapLeft" class="tap-zone tap-left" aria-label="Tap left to go back"></div>
                 </div>
-              </div>
-              <div id="tapRight" class="tap-zone tap-right" aria-label="Tap right to go next"></div>
-            </div>
 
-            <div class="gutter"></div>
+                <div class="page right">
+                  <div id="rightContent" class="page-content"></div>
+                  <div id="tapRight" class="tap-zone tap-right" aria-label="Tap right to go next"></div>
+                </div>
+
+                <!-- SPINE overlay (user provided image) -->
+                <div class="spine">
+                  <img class="spine-img" src="./assets/spine/spine_01.png" alt="">
+                </div>
+
+              </div>
+            </div>
           </div>
 
         </div>
 
-        <!-- optional debug hud -->
         <div id="hud" class="hud" aria-hidden="true"></div>
       </div>
     </div>

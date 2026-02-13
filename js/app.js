@@ -1,28 +1,25 @@
-import {
-  createState, openAlbum, nextSpread, prevSpread, closeToFront
-} from "./state.js";
+import { createState, openAlbum, next, prev, closeToFront } from "./state.js";
 import { render } from "./render.js";
 
 const state = createState();
 
 const els = {
-  albumWrap: document.getElementById("albumWrap"),
+  album: document.getElementById("album"),
   coverBtn: document.getElementById("coverBtn"),
-  coverBook: document.getElementById("coverBook"),
+  book: document.getElementById("book"),
+  coverTitleName: document.querySelector(".cover-title .name"),
+  openWrap: document.getElementById("openWrap"),
+  leftContent: document.getElementById("leftContent"),
+  rightContent: document.getElementById("rightContent"),
   tapLeft: document.getElementById("tapLeft"),
   tapRight: document.getElementById("tapRight"),
-  leftLabel: document.getElementById("leftLabel"),
-  rightLabel: document.getElementById("rightLabel"),
-  hud: document.getElementById("hud"),
-  coverTitleBrand: document.querySelector(".cover-title .brand"),
-  coverTitleName: document.querySelector(".cover-title .name"),
-  coverTitleHint: document.querySelector(".cover-title .hint")
+  hud: document.getElementById("hud")
 };
 
-// Uncomment if you want debug HUD
+// Debug HUD optional
 // els.hud.dataset.on = "1";
 
-function rerender() { render(state, els); }
+function rerender(){ render(state, els); }
 
 // Tap cover
 els.coverBtn.addEventListener("click", () => {
@@ -31,11 +28,11 @@ els.coverBtn.addEventListener("click", () => {
   rerender();
 });
 
-// Tap left/right
-els.tapRight.addEventListener("click", () => { nextSpread(state); rerender(); });
-els.tapLeft.addEventListener("click", () => { prevSpread(state); rerender(); });
+// Tap zones
+els.tapRight.addEventListener("click", () => { next(state); rerender(); });
+els.tapLeft.addEventListener("click", () => { prev(state); rerender(); });
 
-// Swipe support (light)
+// Swipe (light)
 let startX = null;
 document.addEventListener("touchstart", (e) => {
   if (!e.touches?.length) return;
@@ -49,11 +46,9 @@ document.addEventListener("touchend", (e) => {
   startX = null;
 
   if (Math.abs(dx) < 35) return;
-
-  if (dx < 0) nextSpread(state);   // swipe left -> next
-  else prevSpread(state);          // swipe right -> prev
+  if (dx < 0) next(state);
+  else prev(state);
   rerender();
 }, { passive: true });
 
-// Initial render
 rerender();

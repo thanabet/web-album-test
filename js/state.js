@@ -1,57 +1,56 @@
 export function createState() {
   return {
-    pose: "CLOSED_CENTER",   // CLOSED_CENTER | OPEN_CENTER | BACK_CLOSED_CENTER
-    spreadIndex: 0,          // 0..4
+    pose: "CLOSED",      // CLOSED | OPEN | BACK_CLOSED
+    spreadIndex: 0,      // 0..3 (open spreads), back cover is special state
     isOpen: false
   };
 }
 
-export const MAX_SPREAD = 4;
+/**
+ * Spreads (OPEN):
+ * 0: inside_front | photo_01
+ * 1: photo_02     | photo_03
+ * 2: photo_04     | photo_05
+ * 3: photo_06     | inside_back
+ *
+ * BACK_CLOSED (CLOSED):
+ * back_cover shown
+ */
+export const MAX_OPEN_SPREAD = 3;
 
 export function openAlbum(state) {
   state.isOpen = true;
-  state.pose = "OPEN_CENTER";
+  state.pose = "OPEN";
   state.spreadIndex = 0;
 }
 
 export function closeToFront(state) {
   state.isOpen = false;
-  state.pose = "CLOSED_CENTER";
+  state.pose = "CLOSED";
   state.spreadIndex = 0;
 }
 
 export function closeToBack(state) {
   state.isOpen = false;
-  state.pose = "BACK_CLOSED_CENTER";
-  state.spreadIndex = MAX_SPREAD;
+  state.pose = "BACK_CLOSED";
+  state.spreadIndex = MAX_OPEN_SPREAD;
 }
 
-export function nextSpread(state) {
+export function next(state) {
   if (!state.isOpen) return;
-
-  if (state.spreadIndex < MAX_SPREAD) {
-    state.spreadIndex += 1;
-  } else {
-    // Past the end -> show back cover closed
-    closeToBack(state);
-  }
+  if (state.spreadIndex < MAX_OPEN_SPREAD) state.spreadIndex += 1;
+  else closeToBack(state);
 }
 
-export function prevSpread(state) {
+export function prev(state) {
   if (!state.isOpen) {
-    // If showing back cover closed -> reopen to last spread
-    if (state.pose === "BACK_CLOSED_CENTER") {
+    if (state.pose === "BACK_CLOSED") {
       state.isOpen = true;
-      state.pose = "OPEN_CENTER";
-      state.spreadIndex = MAX_SPREAD;
+      state.pose = "OPEN";
+      state.spreadIndex = MAX_OPEN_SPREAD;
     }
     return;
   }
-
-  if (state.spreadIndex > 0) {
-    state.spreadIndex -= 1;
-  } else {
-    // Back from first spread -> close to front cover
-    closeToFront(state);
-  }
+  if (state.spreadIndex > 0) state.spreadIndex -= 1;
+  else closeToFront(state);
 }
