@@ -3,7 +3,7 @@ const SPREAD_LABELS = [
   { left: "photo_02", right: "photo_03" },
   { left: "photo_04", right: "photo_05" },
   { left: "photo_06", right: "inside_back" },
-  { left: "back_cover", right: "table_visible" } // (won't be shown as spread; back is closed pose)
+  { left: "back_cover", right: "table_visible" } // last concept
 ];
 
 export function render(state, els) {
@@ -17,27 +17,24 @@ export function render(state, els) {
   if (state.isOpen) els.albumWrap.classList.add("is-open");
   else els.albumWrap.classList.remove("is-open");
 
-  // labels for current spread (when open)
+  // current spread labels (when open)
   const pair = SPREAD_LABELS[state.spreadIndex] || SPREAD_LABELS[0];
   els.leftLabel.textContent = pair.left;
   els.rightLabel.textContent = pair.right;
 
-  // cover visual tweak for back cover state (placeholder)
+  // cover visuals for front/back closed
   if (!state.isOpen && state.pose === "BACK_CLOSED_CENTER") {
+    els.coverBook.classList.remove("book-front");
+    els.coverBook.classList.add("book-back");
     els.coverTitleBrand.textContent = "Intromie";
     els.coverTitleName.textContent = "Back Cover";
     els.coverTitleHint.textContent = "Tap to open";
-    els.coverFace.classList.add("is-back");
-    els.coverFace.style.background =
-      "radial-gradient(120px 120px at 25% 20%, rgba(255,255,255,.10), rgba(0,0,0,0) 65%)," +
-      "repeating-linear-gradient(25deg, rgba(255,255,255,.05) 0px, rgba(255,255,255,.05) 6px, rgba(0,0,0,0) 6px, rgba(0,0,0,0) 12px)," +
-      "linear-gradient(180deg, #1e3b55, #0d2233)";
   } else {
+    els.coverBook.classList.remove("book-back");
+    els.coverBook.classList.add("book-front");
     els.coverTitleBrand.textContent = "Intromie";
     els.coverTitleName.textContent = "Photo Album";
     els.coverTitleHint.textContent = "Tap to open";
-    els.coverFace.classList.remove("is-back");
-    els.coverFace.style.background = ""; // fallback to CSS default
   }
 
   // optional hud

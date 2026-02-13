@@ -2,33 +2,35 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Intromie Photo Album (M1)</title>
   <link rel="stylesheet" href="./css/main.css" />
 </head>
 <body>
   <main id="app" class="app">
     <div id="table" class="table">
-      <!-- subtle vignette -->
       <div class="vignette"></div>
 
-      <!-- stage controls area (invisible) -->
       <div id="stage" class="stage" aria-label="Album stage">
-        <!-- Album wrapper (moves/poses) -->
+        <!-- Album wrapper (pose moves/scale) -->
         <div id="albumWrap" class="album-wrap pose-closed" role="group" aria-label="Album">
-          <!-- CLOSED: show a single cover -->
-          <button id="coverBtn" class="cover" type="button" aria-label="Tap to open album">
-            <div class="cover-face front">
-              <div class="cover-title">
-                <div class="brand">Intromie</div>
-                <div class="name">Photo Album</div>
-                <div class="hint">Tap to open</div>
+
+          <!-- CLOSED (front/back cover) -->
+          <button id="coverBtn" class="cover-btn" type="button" aria-label="Tap to open album">
+            <div id="coverBook" class="book book-front">
+              <div class="book-face">
+                <div class="cover-title">
+                  <div class="brand">Intromie</div>
+                  <div class="name">Photo Album</div>
+                  <div class="hint">Tap to open</div>
+                </div>
               </div>
+              <div class="book-spine"></div>
+              <div class="book-shadow"></div>
             </div>
-            <div class="cover-edge"></div>
           </button>
 
-          <!-- OPEN: spread (left + right) -->
+          <!-- OPEN spread (landscape) -->
           <div id="spread" class="spread" aria-hidden="true">
             <div class="page left">
               <div class="paper">
@@ -37,7 +39,7 @@
                   <div class="sleeve"></div>
                 </div>
               </div>
-              <div id="tapLeft" class="tap-zone tap-left" title="Tap left to go back"></div>
+              <div id="tapLeft" class="tap-zone tap-left" aria-label="Tap left to go back"></div>
             </div>
 
             <div class="page right">
@@ -47,15 +49,15 @@
                   <div class="sleeve"></div>
                 </div>
               </div>
-              <div id="tapRight" class="tap-zone tap-right" title="Tap right to go next"></div>
+              <div id="tapRight" class="tap-zone tap-right" aria-label="Tap right to go next"></div>
             </div>
 
-            <!-- center gutter shadow -->
             <div class="gutter"></div>
           </div>
+
         </div>
 
-        <!-- tiny debug (optional) -->
+        <!-- optional debug hud -->
         <div id="hud" class="hud" aria-hidden="true"></div>
       </div>
     </div>
