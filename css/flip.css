@@ -1,0 +1,69 @@
+/* Flip layer mounts temporary DOM during animation */
+.flip-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  display:none;
+  transform-style: preserve-3d;
+}
+.flip-layer.is-on{ display:block; }
+
+.flip-scene{
+  position:absolute;
+  inset:0;
+  display:flex;
+  gap:0;
+  transform-style: preserve-3d;
+}
+
+/* two static pages under the flip */
+.flip-under{
+  position:relative;
+  flex:1 1 0;
+  border-radius: 18px;
+  overflow:hidden;
+}
+
+/* flipping sheet (right or left) */
+.flip-sheet{
+  position:absolute;
+  top:0;
+  bottom:0;
+  width: 50%;
+  transform-style: preserve-3d;
+  z-index: 50;
+}
+.flip-sheet.right{ left:50%; transform-origin: 0% 50%; }
+.flip-sheet.left{ left:0;  transform-origin: 100% 50%; }
+
+.sheet-face{
+  position:absolute;
+  inset:0;
+  backface-visibility: hidden;
+  border-radius: 18px;
+  overflow:hidden;
+}
+
+/* front of flipping page */
+.sheet-front{ transform: rotateY(0deg); }
+/* back of flipping page (paper backside) */
+.sheet-back{ transform: rotateY(180deg); }
+
+/* dynamic shadow */
+.sheet-shadow{
+  position:absolute;
+  inset:0;
+  background: linear-gradient(90deg, rgba(0,0,0,.22), rgba(0,0,0,0));
+  opacity: 0;
+  pointer-events:none;
+}
+
+/* “linked” lighting on the opposite page */
+.linked-dim{
+  position:absolute;
+  inset:0;
+  background: rgba(0,0,0,.0);
+  pointer-events:none;
+  transition: background var(--flip-ms) ease;
+}
+.linked-dim.dim{ background: rgba(0,0,0,.08); }

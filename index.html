@@ -3,64 +3,72 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Intromie Photo Album (M1 - Real Album)</title>
+  <title>Intromie Photo Album (M1)</title>
   <link rel="stylesheet" href="./css/main.css" />
+  <link rel="stylesheet" href="./css/album.css" />
+  <link rel="stylesheet" href="./css/flip.css" />
 </head>
 <body>
-  <main class="app">
-    <div class="table">
-      <div class="vignette"></div>
+  <div class="app">
+    <!-- WORLD (always landscape) -->
+    <div id="world" class="world">
+      <!-- TABLE LAYER -->
+      <div id="table" class="table">
+        <div class="table-img" id="tableImg"></div>
+        <div class="vignette"></div>
+      </div>
 
-      <div id="stage" class="stage">
-        <div id="album" class="album pose-closed">
-
-          <!-- CLOSED BOOK -->
-          <button id="coverBtn" class="cover-btn" type="button" aria-label="Tap to open album">
-            <div id="book" class="book book-front">
-              <div class="book-face">
-                <div class="cover-title">
+      <!-- STAGE -->
+      <div class="stage" id="stage">
+        <!-- ALBUM ROOT -->
+        <div id="album" class="album state-closed">
+          <!-- CLOSED BOOK (horizontal) -->
+          <button id="coverBtn" class="cover-btn" type="button" aria-label="Open album">
+            <div id="book" class="book">
+              <div class="book-cover book-front">
+                <div class="cover-text">
                   <div class="brand">Intromie</div>
                   <div class="name">Photo Album</div>
-                  <div class="hint">Tap to open</div>
                 </div>
+                <div class="cover-tex" id="coverFrontTex"></div>
               </div>
-              <div class="book-spine"></div>
-              <div class="book-drop"></div>
+
+              <div class="book-spine-left"></div>
+
+              <div class="book-cover book-back">
+                <div class="cover-tex" id="coverBackTex"></div>
+              </div>
+
+              <div class="book-shadow"></div>
             </div>
           </button>
 
-          <!-- OPEN ALBUM (spread) -->
-          <div id="openWrap" class="open-wrap" aria-hidden="true">
-            <div class="open-frame">
-              <!-- this frame is the "outer cover border" you see around inner pages -->
-              <div class="inner">
-
-                <div class="page left">
-                  <!-- inside cover OR photo slot -->
-                  <div id="leftContent" class="page-content"></div>
-                  <div id="tapLeft" class="tap-zone tap-left" aria-label="Tap left to go back"></div>
-                </div>
-
-                <div class="page right">
-                  <div id="rightContent" class="page-content"></div>
-                  <div id="tapRight" class="tap-zone tap-right" aria-label="Tap right to go next"></div>
-                </div>
-
-                <!-- SPINE overlay (user provided image) -->
-                <div class="spine">
-                  <img class="spine-img" src="./assets/spine/spine_01.png" alt="">
-                </div>
-
-              </div>
+          <!-- OPEN SPREAD -->
+          <div id="spread" class="spread" aria-hidden="true">
+            <div class="page page-left">
+              <div class="page-bg" id="pageBgLeft"></div>
+              <div class="page-content" id="pageLeft"></div>
+              <div class="tap-zone tap-left" id="tapLeft" aria-label="Prev"></div>
             </div>
+
+            <div class="page page-right">
+              <div class="page-bg" id="pageBgRight"></div>
+              <div class="page-content" id="pageRight"></div>
+              <div class="tap-zone tap-right" id="tapRight" aria-label="Next"></div>
+            </div>
+
+            <!-- Spine overlay (user image, narrow) -->
+            <div class="spine-overlay">
+              <img id="spineImg" class="spine-img" alt="" />
+            </div>
+
+            <!-- Flip overlay mount -->
+            <div id="flipLayer" class="flip-layer" aria-hidden="true"></div>
           </div>
-
         </div>
-
-        <div id="hud" class="hud" aria-hidden="true"></div>
       </div>
     </div>
-  </main>
+  </div>
 
   <script type="module" src="./js/app.js"></script>
 </body>

@@ -1,370 +1,82 @@
 :root{
-  --ink: rgba(12,12,12,.78);
+  --flip-ms: 650ms;
 
-  /* stage */
-  --stage-w: 1040px;
-  --stage-h: 620px;
+  /* “world” is landscape. In portrait device we rotate the world. */
+  --world-rot: 0deg;
 
-  /* closed book */
-  --book-w: 280px;       /* portrait */
-  --book-ar: 3/4;        /* width/height */
-  --closed-rot: -2deg;
+  /* stage sizing */
+  --stage-max-w: 1100px;
+  --stage-max-h: 680px;
 
-  /* open album frame (outer cover border) */
-  --frame-ar: 16/9;      /* landscape frame */
-  --frame-pad: 26px;     /* border thickness */
-  --frame-radius: 22px;
-
-  /* page inside open */
-  --page-gap: 18px;
-  --page-radius: 16px;
-
-  /* photo slot */
-  --photo-ar: 2/3;       /* 4x6 */
-  --plastic-scale: 1.08; /* plastic bigger than photo */
-  --back-offset: 10px;   /* photo-back peek */
-
-  /* transforms */
-  --open-scale: 1.0;
-  --open-rot: -1deg;
-
-  /* colors (placeholders) */
-  --cover-front1: #6c2b2b;
-  --cover-front2: #3e1414;
-  --cover-back1: #1e3b55;
-  --cover-back2: #0d2233;
+  /* table overlay */
+  --vignette: radial-gradient(900px 600px at 50% 45%, rgba(0,0,0,0), rgba(0,0,0,.55));
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
 body{
   margin:0;
-  font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "SF Pro Text", Arial, sans-serif;
-  overflow:hidden;
-  -webkit-tap-highlight-color: transparent;
   background:#111;
   color:#fff;
+  overflow:hidden;
+  -webkit-tap-highlight-color: transparent;
+  font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "SF Pro Text", Arial, sans-serif;
 }
 
-.app{height:100%; width:100%}
+.app{ width:100%; height:100%; }
 
-/* TABLE */
-.table{
-  position:relative;
-  height:100%;
-  width:100%;
+/* WORLD */
+.world{
+  position:absolute;
+  inset:0;
   display:flex;
   align-items:center;
   justify-content:center;
-  background:
-    radial-gradient(1200px 700px at 50% 40%, rgba(255,255,255,.12), rgba(0,0,0,0) 55%),
-    repeating-linear-gradient(12deg,
-      rgba(120,75,35,.35) 0px, rgba(120,75,35,.35) 18px,
-      rgba(95,55,22,.35) 18px, rgba(95,55,22,.35) 36px),
-    linear-gradient(180deg, rgba(65,36,12,1), rgba(45,24,10,1));
+  transform: rotate(var(--world-rot));
+  transform-origin: 50% 50%;
+}
+
+/* TABLE */
+.table{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+}
+.table-img{
+  position:absolute;
+  inset:-20px;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.02) contrast(1.02);
+  transform: scale(1.02);
 }
 .vignette{
-  position:absolute; inset:0;
-  background: radial-gradient(900px 600px at 50% 45%, rgba(0,0,0,0), rgba(0,0,0,.55));
+  position:absolute;
+  inset:0;
+  background: var(--vignette);
   pointer-events:none;
 }
 
 /* STAGE */
 .stage{
   position:relative;
-  width: min(96vw, var(--stage-w));
-  height: min(90vh, var(--stage-h));
+  width: min(96vw, var(--stage-max-w));
+  height: min(92vh, var(--stage-max-h));
   display:flex;
   align-items:center;
   justify-content:center;
 }
 
-/* ALBUM ROOT (pose) */
-.album{
-  position:relative;
-  width: 100%;
-  height: 100%;
-  transform-origin: 50% 50%;
-  filter: drop-shadow(0 18px 30px rgba(0,0,0,.42));
-  transition: transform 200ms cubic-bezier(.2,.9,.2,1);
-}
-
-.album.pose-closed{
-  transform: translate(0,0) rotate(var(--closed-rot));
-}
-.album.pose-open{
-  transform: translate(0,0) scale(var(--open-scale)) rotate(var(--open-rot));
-}
-.album.pose-back{
-  transform: translate(0,0) rotate(var(--closed-rot));
-}
-
-/* CLOSED BOOK */
-.cover-btn{
-  position:absolute; inset:0;
-  border:0; padding:0;
-  background:transparent;
-  cursor:pointer;
-}
-.book{
-  position:absolute;
-  left:50%; top:50%;
-  transform: translate(-50%, -50%);
-  width: clamp(220px, 30vw, var(--book-w));
-  aspect-ratio: var(--book-ar);
-  border-radius: 18px;
-  overflow:hidden;
-}
-.book-drop{
-  position:absolute;
-  inset:-22px;
-  background: radial-gradient(260px 200px at 50% 75%, rgba(0,0,0,.42), rgba(0,0,0,0) 70%);
-  transform: translateY(26px);
-  pointer-events:none;
-  opacity:.95;
-}
-.book-face{
-  position:absolute; inset:0;
-  border-radius: 18px;
-  box-shadow: 0 10px 18px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.12);
-}
-
-/* cover style placeholders */
-.book.book-front .book-face{
-  background:
-    radial-gradient(120px 120px at 25% 20%, rgba(255,255,255,.12), rgba(0,0,0,0) 65%),
-    radial-gradient(220px 220px at 70% 80%, rgba(255,255,255,.08), rgba(0,0,0,0) 70%),
-    repeating-linear-gradient(25deg, rgba(255,255,255,.06) 0px, rgba(255,255,255,.06) 6px, rgba(0,0,0,0) 6px, rgba(0,0,0,0) 12px),
-    linear-gradient(180deg, var(--cover-front1), var(--cover-front2));
-}
-.book.book-back .book-face{
-  background:
-    radial-gradient(120px 120px at 25% 20%, rgba(255,255,255,.10), rgba(0,0,0,0) 65%),
-    repeating-linear-gradient(25deg, rgba(255,255,255,.05) 0px, rgba(255,255,255,.05) 6px, rgba(0,0,0,0) 6px, rgba(0,0,0,0) 12px),
-    linear-gradient(180deg, var(--cover-back1), var(--cover-back2));
-}
-
-.book-spine{
-  position:absolute;
-  left:-12px; top:10px; bottom:10px;
-  width:18px;
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(0,0,0,.15));
-  box-shadow: 6px 0 18px rgba(0,0,0,.25);
-  opacity:.95;
-}
-
-.cover-title{
-  position:absolute; inset:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  text-align:center;
-  color: rgba(255,255,255,.92);
-  text-shadow: 0 2px 10px rgba(0,0,0,.35);
-  padding: 0 14px;
-}
-.cover-title .brand{ letter-spacing:.12em; font-size:12px; opacity:.9; }
-.cover-title .name{ font-weight:700; font-size:22px; }
-.cover-title .hint{ margin-top:10px; font-size:12px; opacity:.75; }
-
-/* OPEN WRAP */
-.open-wrap{
-  position:absolute; inset:0;
-  display:none;
-  align-items:center;
-  justify-content:center;
-}
-.album.is-open .open-wrap{ display:flex; }
-.album.is-open .cover-btn{ display:none; }
-
-.open-frame{
-  width: min(96vw, 980px);
-  aspect-ratio: var(--frame-ar);
-  border-radius: var(--frame-radius);
-  padding: var(--frame-pad);
-  position:relative;
-  /* outer cover border visible */
-  background:
-    radial-gradient(220px 180px at 20% 20%, rgba(255,255,255,.08), rgba(0,0,0,0) 60%),
-    radial-gradient(340px 240px at 75% 80%, rgba(0,0,0,.18), rgba(0,0,0,0) 65%),
-    repeating-linear-gradient(25deg, rgba(255,255,255,.05) 0px, rgba(255,255,255,.05) 8px, rgba(0,0,0,0) 8px, rgba(0,0,0,0) 16px),
-    linear-gradient(180deg, #7a3a3a, #3f1717);
-  box-shadow: 0 18px 26px rgba(0,0,0,.32);
-}
-
-.inner{
-  position:relative;
-  width:100%; height:100%;
-  border-radius: calc(var(--frame-radius) - 10px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap: var(--page-gap);
-  overflow:hidden;
-
-  /* inner board / paper base */
-  background:
-    radial-gradient(360px 240px at 30% 25%, rgba(255,255,255,.18), rgba(0,0,0,0) 60%),
-    linear-gradient(180deg, #efe3c8, #e6d7b7);
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
-}
-
-/* PAGES */
-.page{
-  position:relative;
-  height: 92%;
-  width: 44%;
-  border-radius: var(--page-radius);
-  overflow:hidden;
-}
-
-/* tap zones */
-.tap-zone{
-  position:absolute;
-  top:0; bottom:0;
-  width: 42%;
-  cursor:pointer;
-}
-.tap-left{ left:0; }
-.tap-right{ right:0; }
-.tap-zone:active{ background: rgba(0,0,0,.03); }
-
-/* SPINE overlay image (user provided) */
-.spine{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform: translate(-50%, -50%);
-  width: 72px;   /* tweak to match your real spine */
-  height: 94%;
-  pointer-events:none;
-  z-index: 30;
-  filter: drop-shadow(0 10px 14px rgba(0,0,0,.22));
-}
-.spine-img{
-  width:100%;
-  height:100%;
-  object-fit: contain;
-  display:block;
-}
-
-/* PAGE CONTENT templates */
-.page-content{
-  position:absolute;
-  inset: 0;
-  padding: 18px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-/* INSIDE COVER (image background) */
-.inside-cover{
-  position:relative;
-  width:100%;
-  height:100%;
-  border-radius: 14px;
-  overflow:hidden;
-  background: #ddd;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
-}
-.inside-cover img{
-  width:100%;
-  height:100%;
-  object-fit: cover;
-  display:block;
-}
-
-/* PHOTO SLOT */
-.photo-slot{
-  position:relative;
-  width: 72%;
-  aspect-ratio: var(--photo-ar);
-  border-radius: 10px;
-}
-
-/* back photo peek (like another photo inside sleeve) */
-.photo-back{
-  position:absolute;
-  inset: 0;
-  transform: translate(var(--back-offset), calc(var(--back-offset) * -1));
-  border-radius: 10px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.9), rgba(245,245,245,.82));
-  box-shadow: 0 8px 14px rgba(0,0,0,.18);
-  z-index: 1;
-}
-
-/* main photo */
-.photo-main{
-  position:absolute;
-  inset: 0;
-  border-radius: 10px;
-  overflow:hidden;
-  background:
-    radial-gradient(220px 180px at 25% 25%, rgba(255,255,255,.30), rgba(0,0,0,0) 60%),
-    linear-gradient(180deg, rgba(220,220,220,.9), rgba(195,195,195,.85));
-  box-shadow: 0 10px 16px rgba(0,0,0,.22);
-  z-index: 2;
-}
-.photo-main img{
-  width:100%;
-  height:100%;
-  object-fit: cover;
-  display:block;
-}
-
-/* plastic overlay PNG (bigger than photo) */
-.plastic{
-  position:absolute;
-  left:50%;
-  top:50%;
-  width: calc(100% * var(--plastic-scale));
-  height: calc(100% * var(--plastic-scale));
-  transform: translate(-50%, -50%);
-  pointer-events:none;
-  z-index: 5;
-  opacity: .95;
-  object-fit: contain;
-  display:block;
-  filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
-}
-
-/* small label (debug-like) */
-.slot-label{
-  position:absolute;
-  left:10px;
-  bottom:10px;
-  font-size:12px;
-  color: var(--ink);
-  opacity:.55;
-  z-index: 6;
-  user-select:none;
-}
-
-/* HUD (optional) */
-.hud{
-  position:absolute;
-  bottom:12px;
-  left:12px;
-  padding:8px 10px;
-  font-size:12px;
-  opacity:.55;
-  background: rgba(0,0,0,.25);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 10px;
-  backdrop-filter: blur(6px);
-  display:none;
-}
-
-/* Portrait fallback: keep open frame readable (shrink a bit) */
+/* Portrait device: keep world landscape by rotating it */
 @media (orientation: portrait){
-  .open-frame{
-    width: min(96vw, 760px);
+  .world{
+    /* swap effective dimensions by making world use viewport height as width */
+    width: 100vh;
+    height: 100vw;
+    --world-rot: 90deg;
   }
-  .spine{ width: 64px; }
-  .photo-slot{ width: 78%; }
+  .stage{
+    width: min(96vh, var(--stage-max-w));
+    height: min(92vw, var(--stage-max-h));
+  }
 }
