@@ -1,0 +1,257 @@
+:root{
+  --bg: #151515;
+  --shadow: rgba(0,0,0,.28);
+  --shadow-strong: rgba(0,0,0,.45);
+  --paper: #f3ead7;
+  --paper2: #efe3c8;
+  --ink: rgba(10,10,10,.82);
+
+  /* pose tuning */
+  --closed-scale: 1;
+  --open-scale: 1.12;  /* ตามที่พี่มี่อยากให้เปิดแล้วใหญ่ขึ้นนิด */
+  --closed-rot: -2deg;
+  --open-rot: -1deg;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "SF Pro Text", Arial, sans-serif;
+  background: var(--bg);
+  color: #fff;
+  overflow:hidden;
+}
+
+.app{height:100%; width:100%}
+.table{
+  position:relative;
+  height:100%;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  /* Placeholder table texture (warm wood-ish) */
+  background:
+    radial-gradient(1200px 700px at 50% 40%, rgba(255,255,255,.12), rgba(0,0,0,0) 55%),
+    repeating-linear-gradient(12deg,
+      rgba(120,75,35,.35) 0px, rgba(120,75,35,.35) 18px,
+      rgba(95,55,22,.35) 18px, rgba(95,55,22,.35) 36px),
+    linear-gradient(180deg, rgba(65,36,12,1), rgba(45,24,10,1));
+}
+
+.vignette{
+  position:absolute; inset:0;
+  background: radial-gradient(900px 600px at 50% 45%, rgba(0,0,0,0), rgba(0,0,0,.55));
+  pointer-events:none;
+}
+
+.stage{
+  position:relative;
+  width:min(440px, 92vw);
+  height:min(760px, 92vh);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.album-wrap{
+  position:relative;
+  width: min(380px, 86vw);
+  height: min(520px, 70vh);
+  transform-origin: 50% 50%;
+  transition: transform 200ms cubic-bezier(.2,.9,.2,1);
+  filter: drop-shadow(0 18px 30px rgba(0,0,0,.45));
+}
+
+/* Poses */
+.album-wrap.pose-closed{
+  transform: translate(0px, 0px) scale(var(--closed-scale)) rotate(var(--closed-rot));
+}
+.album-wrap.pose-open{
+  transform: translate(0px, 0px) scale(var(--open-scale)) rotate(var(--open-rot));
+}
+.album-wrap.pose-back{
+  transform: translate(0px, 0px) scale(var(--closed-scale)) rotate(var(--closed-rot));
+}
+
+/* Cover button (closed state) */
+.cover{
+  position:absolute;
+  inset:0;
+  border:0;
+  padding:0;
+  background:transparent;
+  cursor:pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.cover:active{transform: translateY(1px);}
+
+.cover-face{
+  position:absolute;
+  inset:0;
+  border-radius: 18px;
+  overflow:hidden;
+  box-shadow:
+    0 10px 18px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+/* Cover style placeholder (warm leather-ish) */
+.cover-face.front{
+  background:
+    radial-gradient(120px 120px at 25% 20%, rgba(255,255,255,.12), rgba(0,0,0,0) 65%),
+    radial-gradient(220px 220px at 70% 80%, rgba(255,255,255,.08), rgba(0,0,0,0) 70%),
+    repeating-linear-gradient(25deg, rgba(255,255,255,.06) 0px, rgba(255,255,255,.06) 6px, rgba(0,0,0,0) 6px, rgba(0,0,0,0) 12px),
+    linear-gradient(180deg, #6c2b2b, #3e1414);
+}
+
+/* spine edge */
+.cover-edge{
+  position:absolute;
+  left:-12px; top:10px; bottom:10px;
+  width:18px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(0,0,0,.15));
+  box-shadow: 6px 0 18px rgba(0,0,0,.25);
+  opacity:.95;
+}
+
+.cover-title{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  text-align:center;
+  color: rgba(255,255,255,.92);
+  text-shadow: 0 2px 10px rgba(0,0,0,.35);
+}
+.cover-title .brand{
+  letter-spacing:.12em;
+  font-size:12px;
+  opacity:.9;
+}
+.cover-title .name{
+  font-weight:700;
+  font-size:22px;
+}
+.cover-title .hint{
+  margin-top:10px;
+  font-size:12px;
+  opacity:.75;
+}
+
+/* Spread (open state) */
+.spread{
+  position:absolute;
+  inset:0;
+  display:none; /* hidden until open */
+  align-items:center;
+  justify-content:center;
+  gap: 14px;
+  perspective: 1200px;
+}
+.album-wrap.is-open .spread{display:flex;}
+.album-wrap.is-open .cover{display:none;}
+
+.page{
+  position:relative;
+  width: calc(50% - 8px);
+  height: 100%;
+  border-radius: 16px;
+  overflow:hidden;
+}
+
+.paper{
+  position:absolute;
+  inset:0;
+  border-radius: 16px;
+  background:
+    radial-gradient(200px 160px at 30% 20%, rgba(255,255,255,.35), rgba(0,0,0,0) 60%),
+    linear-gradient(180deg, var(--paper), var(--paper2));
+  box-shadow:
+    0 12px 18px rgba(0,0,0,.16),
+    inset 0 1px 0 rgba(255,255,255,.38);
+}
+
+.paper-inner{
+  position:absolute;
+  inset:14px;
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.02) 0px, rgba(0,0,0,.02) 2px, rgba(255,255,255,0) 2px, rgba(255,255,255,0) 7px),
+    radial-gradient(260px 220px at 40% 30%, rgba(0,0,0,.03), rgba(0,0,0,0) 60%);
+  overflow:hidden;
+}
+
+.label{
+  position:absolute;
+  left:12px;
+  bottom:12px;
+  font-size:12px;
+  color: var(--ink);
+  opacity:.65;
+  user-select:none;
+}
+
+/* plastic sleeve effect */
+.sleeve{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(120deg,
+      rgba(255,255,255,.0) 0%,
+      rgba(255,255,255,.10) 18%,
+      rgba(255,255,255,.02) 38%,
+      rgba(255,255,255,.08) 62%,
+      rgba(255,255,255,.0) 85%),
+    radial-gradient(180px 120px at 70% 25%, rgba(255,255,255,.12), rgba(255,255,255,0) 70%);
+  mix-blend-mode: screen;
+  opacity: .55;
+}
+
+/* tap zones */
+.tap-zone{
+  position:absolute;
+  top:0; bottom:0;
+  width: 42%;
+  cursor:pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.tap-left{left:0;}
+.tap-right{right:0;}
+.tap-zone:active{
+  background: rgba(0,0,0,.04);
+}
+
+/* center gutter */
+.gutter{
+  position:absolute;
+  left:50%;
+  top:10px;
+  bottom:10px;
+  width:22px;
+  transform: translateX(-50%);
+  background: radial-gradient(12px 320px at 50% 50%, rgba(0,0,0,.25), rgba(0,0,0,0) 70%);
+  opacity:.75;
+  pointer-events:none;
+}
+
+/* tiny hud */
+.hud{
+  position:absolute;
+  bottom:12px;
+  left:12px;
+  padding:8px 10px;
+  font-size:12px;
+  opacity:.55;
+  background: rgba(0,0,0,.25);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  display:none; /* turn on in JS if you want */
+}
